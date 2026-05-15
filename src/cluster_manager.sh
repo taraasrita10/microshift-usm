@@ -146,6 +146,16 @@ _add_node() {
         mount_opts="--volume ${EXTRA_CONFIG}:/etc/microshift/config.d/api_server.yaml:ro"
     fi
 
+    local pull_secret=""
+    if  [ -n "${PULL_SECRET}" ] && [ -f "${PULL_SECRET}" ]; then
+        pull_secret="--volume ${PULL_SECRET}:/etc/crio/openshift-pull-secret:ro"
+    fi
+
+    local registries_opts=""
+    if [ -n "${REGISTRIES_CONF}" ] && [ -f "${REGISTRIES_CONF}" ]; then
+        registries_opts="--volume ${REGISTRIES_CONF}:/etc/containers/registries.conf.d/99-mirrors.conf:ro"
+    fi
+
     local rc=0
     # shellcheck disable=SC2086
     sudo podman run --privileged -d \
@@ -155,6 +165,8 @@ _add_node() {
         ${network_opts} \
         ${port_opts} \
         ${mount_opts} \
+	${pull_secret} \        
+        ${registries_opts} \
         --tmpfs /var/lib/containers \
         --name "${name}" \
         --hostname "${name}" \

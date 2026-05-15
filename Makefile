@@ -116,6 +116,20 @@ rpm-to-deb:
 	echo "Conversion completed successfully" && \
 	echo "Debian packages are available in '${RPM_OUTDIR}/deb'"
 
+.PHONY: icsp-to-registries
+icsp-to-registries:
+	@if [ -z "${ICSP_FILE}" ]; then \
+                echo "ERROR: ICSP_FILE is not set" >&2; \
+                echo "Usage: make icsp-to-registries ICSP_FILE=<path-to-icsp.yaml> [OUTPUT=<output.conf>]" >&2; \
+                exit 1; \
+        fi
+	@if [ -n "${OUTPUT}" ]; then \
+                ./src/icsp_to_registries.sh "${ICSP_FILE}" > "${OUTPUT}"; \
+                echo "Conversion completed: ${OUTPUT}"; \
+        else \
+                ./src/icsp_to_registries.sh "${ICSP_FILE}"; \
+        fi
+
 .PHONY: image
 image:
 	@if ! sudo podman image exists "${RPM_IMAGE}" ; then \
@@ -140,7 +154,7 @@ image:
 
 .PHONY: run
 run:
-	@USHIFT_IMAGE=${USHIFT_IMAGE} ISOLATED_NETWORK=${ISOLATED_NETWORK} LVM_DISK=${LVM_DISK} LVM_VOLSIZE=${LVM_VOLSIZE} VG_NAME=${VG_NAME} EXPOSE_KUBEAPI_PORT=${EXPOSE_KUBEAPI_PORT} ./src/cluster_manager.sh create
+	@USHIFT_IMAGE=${USHIFT_IMAGE} ISOLATED_NETWORK=${ISOLATED_NETWORK} LVM_DISK=${LVM_DISK} LVM_VOLSIZE=${LVM_VOLSIZE} VG_NAME=${VG_NAME} EXPOSE_KUBEAPI_PORT=${EXPOSE_KUBEAPI_PORT} PULL_SECRET=${PULL_SECRET} REGISTRIES_CONF=${REGISTRIES_CONF} ./src/cluster_manager.sh create
 
 .PHONY: add-node
 add-node:
@@ -227,4 +241,4 @@ _shellcheck:
 	podman run --rm -i \
 		-v "$(CURDIR):/mnt:Z" \
 		docker.io/koalaman/shellcheck:v0.11.0 --format=gcc --external-sources \
-		**/*.sh
+i		**/*.sh

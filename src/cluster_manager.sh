@@ -84,7 +84,7 @@ _get_ip_address() {
 }
 
 _get_hostname() {
-    local -r hostname=$(hostname -f 2>/dev/null)        
+    local -r hostname=$(hostname -f 2>/dev/null)
     if [ -z "$hostname" ]; then
         echo "ERROR: Could not determine local FQDN hostname" >&2
         exit 1
@@ -150,7 +150,10 @@ _add_node() {
     if  [ -n "${PULL_SECRET}" ] && [ -f "${PULL_SECRET}" ]; then
         pull_secret="--volume ${PULL_SECRET}:/etc/crio/openshift-pull-secret:ro"
     fi
-
+    local policy_opts=""
+    if [ -n "${POLICY_FILE}" ] && [ -f "${POLICY_FILE}" ]; then
+        policy_opts="--volume ${POLICY_FILE}:/etc/containers/policy.json:ro"
+    fi
     local registries_opts=""
     if [ -n "${REGISTRIES_CONF}" ] && [ -f "${REGISTRIES_CONF}" ]; then
         registries_opts="--volume ${REGISTRIES_CONF}:/etc/containers/registries.conf.d/99-mirrors.conf:ro"
@@ -165,9 +168,9 @@ _add_node() {
         ${network_opts} \
         ${port_opts} \
         ${mount_opts} \
-	${pull_secret} \        
+        ${pull_secret} \
+        ${policy_opts} \
         ${registries_opts} \
-        --tmpfs /var/lib/containers \
         --name "${name}" \
         --hostname "${name}" \
         "${USHIFT_IMAGE}"
@@ -431,7 +434,7 @@ cluster_status() {
 
 cluster_env() {
     local command="${1:-}"
-   
+
     # Set first_container from the first value of containers array
     local -r first_container=$(_get_running_containers | head -n1)
     if [ -z "${first_container}" ]; then
@@ -452,7 +455,7 @@ cluster_env() {
     sudo podman cp "${first_container}:/var/lib/microshift/resources/kubeadmin/$(_get_hostname)/kubeconfig" "${workdir}/kubeconfig"
     sudo chown "$(whoami):$(whoami)" "${workdir}/kubeconfig"
     export KUBECONFIG="${workdir}/kubeconfig"
-    
+
     if [ -n "${command}" ]; then
         # Execute the command and exit
         echo "Executing command in environment with kubeconfig..."
@@ -460,7 +463,7 @@ cluster_env() {
     else
         # Start interactive shell
         echo "Starting shell environment with kubeconfig..."
-        bash -li 
+        bash -li
     fi
 }
 

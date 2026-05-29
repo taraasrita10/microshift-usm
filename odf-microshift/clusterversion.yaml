@@ -1,0 +1,15 @@
+apiVersion: config.openshift.io/v1
+kind: ClusterVersion
+metadata:
+  name: version
+spec:
+  channel: stable-4.22
+  clusterID: microshift-cluster-001
+status:
+  desired:
+    version: 4.22.0
+  history:
+  - state: Completed
+    version: 4.22.0
+    completionTime: "2026-05-29T06:00:00Z"
+  version: 4.22.0

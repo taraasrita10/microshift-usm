@@ -5,8 +5,9 @@ metadata:
   namespace: openshift-storage
 spec:
   flexibleScaling: true
-  managedResources: {}
-  # monDataDirHostPath: /var/lib/rook
+  managedResources:
+    cephObjectStores:
+      reconcileStrategy: ignore
   monPVCTemplate:
     spec:
       storageClassName: topolvm-provisioner
@@ -24,7 +25,6 @@ spec:
     nfs: {}
     noobaa-core: {}
     noobaa-standalone: {}
-    osd: {}
     osd-prepare: {}
   resources:
     mon:
@@ -71,22 +71,21 @@ spec:
         cpu: 125m
         memory: 128Mi
   storageDeviceSets:
-    - count: 1
-      dataPVCTemplate:
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 10Gi
-          storageClassName: topolvm-provisioner
-          volumeMode: Block
-      name: ocs-deviceset
-      placement: {}
-      portable: false
-      replica: 1
-      resources:
-        requests:
-          cpu: 125m
-          memory: 128Mi
-
+  - count: 1
+    dataPVCTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: topolvm-provisioner
+        volumeMode: Block
+    name: ocs-deviceset
+    placement: {}
+    portable: false
+    replica: 1
+    resources:
+      requests:
+        cpu: 125m
+        memory: 128Mi

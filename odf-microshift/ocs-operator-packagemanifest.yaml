@@ -1,0 +1,12 @@
+apiVersion: packages.operators.coreos.com/v1
+kind: PackageManifest
+metadata:
+  name: ocs-operator
+  namespace: openshift-marketplace
+status:
+  catalogSource: odf-catalogsource
+  catalogSourceNamespace: openshift-marketplace
+  packageName: ocs-operator
+  channels:
+  - name: stable-4.22
+    currentCSV: ocs-operator.v4.22.0-73.stable

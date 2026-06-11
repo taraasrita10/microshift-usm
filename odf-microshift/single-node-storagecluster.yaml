@@ -1,13 +1,16 @@
 apiVersion: ocs.openshift.io/v1
 kind: StorageCluster
 metadata:
-  name: sno-storagecluster
+  name: ocs-storagecluster
   namespace: openshift-storage
 spec:
-  flexibleScaling: true
   managedResources:
     cephObjectStores:
       reconcileStrategy: ignore
+    cephObjectStoreUsers: 
+      reconcileStrategy: ignore
+  multiCloudGateway: 
+    reconcileStrategy: ignore
   monPVCTemplate:
     spec:
       storageClassName: topolvm-provisioner
@@ -15,7 +18,7 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 10Gi
+          storage: 2Gi
   placement:
     mon: {}
     mds: {}
@@ -78,13 +81,13 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 10Gi
+            storage: 5Gi
         storageClassName: topolvm-provisioner
         volumeMode: Block
     name: ocs-deviceset
     placement: {}
     portable: false
-    replica: 1
+    replica: 3
     resources:
       requests:
         cpu: 125m

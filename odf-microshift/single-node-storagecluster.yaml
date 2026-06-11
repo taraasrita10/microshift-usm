@@ -15,7 +15,7 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 10Gi
+          storage: 2Gi
   placement:
     mon: {}
     mds: {}
@@ -78,13 +78,13 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 10Gi
+            storage: 5Gi
         storageClassName: topolvm-provisioner
         volumeMode: Block
     name: ocs-deviceset
     placement: {}
     portable: false
-    replica: 1
+    replica: 3
     resources:
       requests:
         cpu: 125m

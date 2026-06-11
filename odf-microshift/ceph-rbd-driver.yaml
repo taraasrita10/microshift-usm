@@ -1,0 +1,66 @@
+apiVersion: csi.ceph.io/v1
+kind: Driver
+metadata:
+  name: rbd.csi.ceph.com
+  namespace: openshift-storage
+spec:
+  attachRequired: true
+  clusterName: microshift-cluster-001
+  fsGroupPolicy: File
+  deployCsiAddons: true
+  enableMetadata: true
+  generateOMapInfo: true
+  imageSet:
+    name: csi-images-v4.22
+  log:
+    verbosity: 5
+    rotation:
+      maxLogSize: 500M
+      maxFiles: 7
+      periodicity: daily
+      logHostPath: /var/lib/cephcsi
+  controllerPlugin:
+    replicas: 1
+    priorityClassName: system-cluster-critical
+    imagePullPolicy: IfNotPresent
+    resources:
+      plugin:
+        requests:
+          cpu: 100m
+          memory: 250Mi
+        limits:
+          cpu: "1"
+          memory: 1Gi
+      provisioner:
+        requests:
+          cpu: 50m
+          memory: 100Mi
+      attacher:
+        requests:
+          cpu: 50m
+          memory: 50Mi
+      resizer:
+        requests:
+          cpu: 50m
+          memory: 100Mi
+      snapshotter:
+        requests:
+          cpu: 50m
+          memory: 100Mi
+  nodePlugin:
+    kubeletDirPath: /var/lib/kubelet
+    priorityClassName: system-node-critical
+    imagePullPolicy: IfNotPresent
+    enableSeLinuxHostMount: true
+    resources:
+      plugin:
+        requests:
+          cpu: 100m
+          memory: 250Mi
+        limits:
+          cpu: "1"
+          memory: 1536Mi
+      registrar:
+        requests:
+          cpu: 10m
+          memory: 10Mi

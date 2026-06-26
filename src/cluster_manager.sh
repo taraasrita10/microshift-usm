@@ -173,6 +173,7 @@ _add_node() {
         ${registries_opts} \
         --name "${name}" \
         --hostname "${name}" \
+         --volume "/var/lib/containers:/var/lib/containers" \
         "${USHIFT_IMAGE}"
 
     rc=$?
